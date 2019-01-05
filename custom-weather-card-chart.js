@@ -165,9 +165,6 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   computeTemp(temperature) {
-    if (temperature > 0) {
-      return "+" + Math.round(temperature);
-    }
     return Math.round(temperature)
   }
 
@@ -331,9 +328,6 @@ class WeatherCardChart extends Polymer.Element {
               display: true,
               fontColor: textColor,
               callback: function(value, index, values) {
-                if (value > 0) {
-                  return '+' + value;
-                }
                 return value;
               }
             },
