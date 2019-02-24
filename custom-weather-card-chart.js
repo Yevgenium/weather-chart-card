@@ -82,7 +82,7 @@ class WeatherCardChart extends Polymer.Element {
           color: var(--paper-item-icon-color);
         }
         .card {
-          padding: 0 18px 18px 18px;
+          padding: 16px;
         }
         .main {
           display: flex;
