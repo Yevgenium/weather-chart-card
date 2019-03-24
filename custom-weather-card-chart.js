@@ -16,6 +16,7 @@ const locale = {
     tempLo: "Temperature night",
     precip: "Precipitations",
     uPress: "hPa",
+    uPressMmHg: "mmHg",
     uSpeed: "m/s",
     uPrecip: "mm",
     cardinalDirections: [
@@ -52,6 +53,7 @@ const locale = {
     tempLo: "Температура ночью",
     precip: "Осадки",
     uPress: "гПа",
+    uPressMmHg: "мм",
     uSpeed: "м/с",
     uPrecip: "мм",
     cardinalDirections: [
@@ -134,7 +136,7 @@ class WeatherCardChart extends Polymer.Element {
           <div class="attributes" on-click="_weatherAttr">
             <div>
               <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
-              <ha-icon icon="hass:gauge"></ha-icon> [[roundNumber(weatherObj.attributes.pressure)]] [[ll('uPress')]]
+              <ha-icon icon="hass:gauge"></ha-icon> [[computePressure(weatherObj.attributes.pressure)]] [[ll('uPress')]]
             </div>
             <div>
               <template is="dom-if" if="[[sunObj]]">
@@ -201,11 +203,12 @@ class WeatherCardChart extends Polymer.Element {
 
   setConfig(config) {
     this.config = config;
-    this.title = config.title;
-    this.weatherObj = config.weather;
+    this.title = config.title || "";
+    this.weatherObj = config.weather || config.entity;
     this.tempObj = config.temp;
     this.mode = config.mode;
-    if (!config.weather) {
+    this.pressure2mmhg = config.pressure2mmhg || false;
+    if (!this.weatherObj) {
       throw new Error('Please define "weather" entity in the card config');
     }
   }
@@ -213,7 +216,8 @@ class WeatherCardChart extends Polymer.Element {
   set hass(hass) {
     this._hass = hass;
     this.lang = this._hass.selectedLanguage || this._hass.language;
-    this.weatherObj = this.config.weather in hass.states ? hass.states[this.config.weather] : null;
+    this.weatherObj = this.config.weather in hass.states ? hass.states[this.config.weather] :
+        this.config.entity in hass.states ? hass.states[this.config.entity] : null;
     this.sunObj = 'sun.sun' in hass.states ? hass.states['sun.sun'] : null;
     this.tempObj = this.config.temp in hass.states ? hass.states[this.config.temp] : null;
     this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
@@ -230,7 +234,10 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   ll(str) {
-    if (locale[this.lang] === undefined)
+    if (str === "uPress" && this.pressure2mmhg) {
+      str = "uPressMmHg";
+    }
+    if (locale[this.lang] === undefined || locale[this.lang][str] === undefined)
       return locale.en[str];
     return locale[this.lang][str];
   }
@@ -240,6 +247,12 @@ class WeatherCardChart extends Polymer.Element {
     return date.toLocaleTimeString(this.lang,
       { hour:'2-digit', minute:'2-digit' }
     );
+  }
+
+  computePressure(pressure) {
+    var calcPressure = this.pressure2mmhg ? Math.round(pressure * 1000 / 1333)
+        : Math.round(pressure);
+    return calcPressure;
   }
 
   computeWind(speed) {
@@ -475,7 +488,7 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   _weatherAttr() {
-    this._fire('hass-more-info', { entityId: this.config.weather });
+    this._fire('hass-more-info', { entityId: this.config.weather || this.config.entity });
   }
 }
 
