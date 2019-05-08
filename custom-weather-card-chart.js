@@ -4,7 +4,10 @@ const locale = {
     tempLo: "Temperatur nat",
     precip: "Nedbør",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NØ', 'NØ', 'Ø-NØ', 'Ø', 'Ø-SØ', 'SØ', 'S-SØ',
@@ -16,7 +19,10 @@ const locale = {
     tempLo: "Temperature night",
     precip: "Precipitations",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
@@ -28,7 +34,10 @@ const locale = {
     tempLo: "Température nuit",
     precip: "Précipitations",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
@@ -40,7 +49,10 @@ const locale = {
     tempLo: "Minimum temperatuur",
     precip: "Neerslag",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-ZO', 'ZO', 'Z-ZO',
@@ -51,8 +63,11 @@ const locale = {
     tempHi: "Температура",
     tempLo: "Температура ночью",
     precip: "Осадки",
-    uPress: "гПа",
-    uSpeed: "м/с",
+    uPress: "",
+    uSpeed: {
+      "ms": "гПа",
+      "kmh": "км/ч"
+    },
     uPrecip: "мм",
     cardinalDirections: [
       'С', 'С-СВ', 'СВ', 'В-СВ', 'В', 'В-ЮВ', 'ЮВ', 'Ю-ЮВ',
@@ -64,7 +79,10 @@ const locale = {
     tempLo: "Temperatur natt",
     precip: "Nederbörd",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-SO', 'SO', 'S-SO',
@@ -144,7 +162,7 @@ class WeatherCardChart extends Polymer.Element {
             </div>
             <div>
               <ha-icon icon="hass:[[getWindDirIcon(windBearing)]]"></ha-icon> [[getWindDir(windBearing)]]<br>
-              <ha-icon icon="hass:weather-windy"></ha-icon> [[computeWind(weatherObj.attributes.wind_speed)]] [[ll('uSpeed')]]
+              <ha-icon icon="hass:weather-windy"></ha-icon> [[computeWind(weatherObj.attributes.wind_speed)]] [[getWindUnit()]]
             </div>
           </div>
           <ha-chart-base data="[[ChartData]]"></ha-chart-base>
@@ -176,6 +194,7 @@ class WeatherCardChart extends Polymer.Element {
   constructor() {
     super();
     this.mode = 'daily';
+    this.windUnit = 'ms';
     this.weatherIcons = {
       'clear-night': 'hass:weather-night',
       'cloudy': 'hass:weather-cloudy',
@@ -205,6 +224,7 @@ class WeatherCardChart extends Polymer.Element {
     this.weatherObj = config.weather;
     this.tempObj = config.temp;
     this.mode = config.mode;
+    this.windUnit = config.wind_unit || 'ms';
     if (!config.weather) {
       throw new Error('Please define "weather" entity in the card config');
     }
@@ -243,8 +263,10 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   computeWind(speed) {
-    var calcSpeed = Math.round(speed * 1000 / 3600);
-    return calcSpeed;
+    if (this.windUnit === 'ms')
+      return Math.round(speed * 1000 / 3600);
+    else
+      return speed;
   }
 
   getCardSize() {
@@ -257,6 +279,10 @@ class WeatherCardChart extends Polymer.Element {
 
   getWeatherIcon(condition) {
     return this.weatherIcons[condition];
+  }
+
+  getWindUnit() {
+    return this.ll('uSpeed')[this.windUnit];
   }
 
   getWindDirIcon(degree) {
