@@ -30,10 +30,11 @@ custom_updater:
 
 #### Configuration variables:
 
-| Name    | Optional | Description                                                                                        |
-| ------- | -------- | -------------------------------------------------------------------------------------------------- |
-| type    | **No**   | Should be `'custom:weather-card-chart'`                                                            |
-| title   | **No**   | Card title                                                                                         |
-| weather | **No**   | An entity_id with the `weather` domain                                                             |
-| temp    | Yes      | Entity_id of the temperature sensor. Show temperature value from sensor instead                    |
-| mode    | Yes      | Default value: `daily`. Set mode to `hourly` to display hours instead weekdays on the chart        |
+| Name       | Optional | Description                                                                                        |
+| ---------- | -------- | -------------------------------------------------------------------------------------------------- |
+| type       | **No**   | Should be `'custom:weather-card-chart'`                                                            |
+| title      | **No**   | Card title                                                                                         |
+| weather    | **No**   | An entity_id with the `weather` domain                                                             |
+| temp       | Yes      | Entity_id of the temperature sensor. Show temperature value from sensor instead                    |
+| mode       | Yes      | Default value: `daily`. Set mode to `hourly` to display hours instead weekdays on the chart        |
+| chart_only | Yes      | Hides the current conditions to only display the temperature/precipitation chart itself            |

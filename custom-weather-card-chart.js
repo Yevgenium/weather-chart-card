@@ -119,10 +119,13 @@ class WeatherCardChart extends Polymer.Element {
           align-items: center;
           margin: 0px 3px 0px 16px;
         }
+        [hidden] {
+          display: none !important;
+        }
       </style>
       <ha-card header="[[title]]">
         <div class="card">
-          <div class="main">
+          <div class="main" hidden="[[chartOnly]]">
             <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
             <template is="dom-if" if="[[tempObj]]">
               <div on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
@@ -131,7 +134,7 @@ class WeatherCardChart extends Polymer.Element {
               <div on-click="_weatherAttr">[[roundNumber(weatherObj.attributes.temperature)]]<sup>[[getUnit('temperature')]]</sup></div>
             </template>
           </div>
-          <div class="attributes" on-click="_weatherAttr">
+          <div class="attributes" on-click="_weatherAttr" hidden="[[chartOnly]]">
             <div>
               <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
               <ha-icon icon="hass:gauge"></ha-icon> [[roundNumber(weatherObj.attributes.pressure)]] [[ll('uPress')]]
@@ -166,6 +169,7 @@ class WeatherCardChart extends Polymer.Element {
       sunObj: Object,
       tempObj: Object,
       mode: String,
+      chartOnly: Boolean,
       weatherObj: {
         type: Object,
         observer: 'dataChanged',
@@ -205,6 +209,7 @@ class WeatherCardChart extends Polymer.Element {
     this.weatherObj = config.weather;
     this.tempObj = config.temp;
     this.mode = config.mode;
+    this.chartOnly = config.chart_only;
     if (!config.weather) {
       throw new Error('Please define "weather" entity in the card config');
     }
