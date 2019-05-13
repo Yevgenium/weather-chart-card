@@ -398,7 +398,7 @@ class WeatherCardChart extends Polymer.Element {
               display: true,
               drawBorder: false,
               color: dividerColor,
-              borderDash: [1,3],
+              borderDash: [4,6],
             },
             ticks: {
               display: true,
