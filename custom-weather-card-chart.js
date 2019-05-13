@@ -169,7 +169,7 @@ class WeatherCardChart extends Polymer.Element {
       sunObj: Object,
       tempObj: Object,
       mode: String,
-      this.chartOnly = config.chartOnly;
+      chartOnly: Boolean,
       weatherObj: {
         type: Object,
         observer: 'dataChanged',
@@ -209,6 +209,7 @@ class WeatherCardChart extends Polymer.Element {
     this.weatherObj = config.weather;
     this.tempObj = config.temp;
     this.mode = config.mode;
+    this.chartOnly = config.chart_only;
     if (!config.weather) {
       throw new Error('Please define "weather" entity in the card config');
     }
