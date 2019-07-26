@@ -415,6 +415,9 @@ class WeatherCardChart extends Polymer.Element {
             ticks: {
               display: true,
               fontColor: textColor,
+              callback: function(value, index, values) {
+                return value + 'º';
+              },
             },
             afterFit: function(scaleInstance) {
               scaleInstance.width = 28;
