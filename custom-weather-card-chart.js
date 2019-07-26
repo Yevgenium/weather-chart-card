@@ -392,13 +392,13 @@ class WeatherCardChart extends Polymer.Element {
               fontColor: textColor,
               maxRotation: 0,
               callback: function(value, index, values) {
-                var data = new Date(value).toLocaleDateString(locale,
-                  { weekday: 'short' });
-                var time = new Date(value).toLocaleTimeString(locale,
-                  { hour: 'numeric' });
                 if (mode == 'hourly') {
+                  var time = new Date(value).toLocaleTimeString(locale,
+                  { hour: 'numeric', minute: 'numeric' });
                   return time;
                 }
+                var data = new Date(value).toLocaleDateString(locale,
+                  { weekday: 'short' });
                 return data;
               },
             },
