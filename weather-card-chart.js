@@ -19,7 +19,10 @@ const locale = {
     tempLo: "Tiefsttemperatur",
     precip: "Niederschlag",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-SO', 'SO', 'S-SO',
@@ -47,7 +50,10 @@ const locale = {
     tempLo: "Temperatura mínima",
     precip: "Precipitations",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
