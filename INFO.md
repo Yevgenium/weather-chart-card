@@ -2,16 +2,6 @@
 
 ## Configuration
 
-Copy `weather-card-chart.js` from this repository into your `config/www` directory first.
-
-Add a reference to the copied file:
-```yaml
-# Example Lovelace UI config entry
-resources:
-- type: module
-  url: /local/weather-card-chart.js
-```
-Then you can add the card to the view:
 ```yaml
 # Example Lovelace UI config entry
   - type: 'custom:weather-card-chart'

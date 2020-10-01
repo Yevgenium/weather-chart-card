@@ -14,6 +14,18 @@ const locale = {
       'S', 'S-SV', 'SV', 'V-SV', 'V', 'V-NV', 'NV', 'N-NV', 'N'
     ]
   },
+  de: {
+    tempHi: "Höchsttemperatur",
+    tempLo: "Tiefsttemperatur",
+    precip: "Niederschlag",
+    uPress: "hPa",
+    uSpeed: "m/s",
+    uPrecip: "mm",
+    cardinalDirections: [
+      'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-SO', 'SO', 'S-SO',
+      'S', 'S-SW', 'SW', 'W-SW', 'W', 'W-NW', 'NW', 'N-NW', 'N'
+    ]
+  },
   en: {
     tempHi: "Temperature",
     tempLo: "Temperature night",
@@ -28,6 +40,18 @@ const locale = {
     cardinalDirections: [
       'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
       'S', 'S-SW', 'SW', 'W-SW', 'W', 'W-NW', 'NW', 'N-NW', 'N'
+    ]
+  },
+  es: {
+    tempHi: "Temperatura máxima",
+    tempLo: "Temperatura mínima",
+    precip: "Precipitations",
+    uPress: "hPa",
+    uSpeed: "m/s",
+    uPrecip: "mm",
+    cardinalDirections: [
+      'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
+      'S', 'S-SO', 'SO', 'O-SO', 'O', 'O-NO', 'NO', 'N-NO', 'N'
     ]
   },
   fr: {
@@ -119,6 +143,7 @@ class WeatherCardChart extends Polymer.Element {
         .main ha-icon {
           --iron-icon-height: 74px;
           --iron-icon-width: 74px;
+          --mdc-icon-size: 74px;
           margin-right: 20px;
         }
         .main div {
@@ -186,7 +211,7 @@ class WeatherCardChart extends Polymer.Element {
               </div>
             </div>
           </template>
-          <ha-chart-base data="[[ChartData]]"></ha-chart-base>
+          <ha-chart-base hass="[[_hass]]" data="[[ChartData]]"></ha-chart-base>
           <div class="conditions">
             <template is="dom-repeat" items="[[forecast]]">
               <div>
@@ -225,7 +250,7 @@ class WeatherCardChart extends Polymer.Element {
       'hail': 'hass:weather-hail',
       'lightning': 'hass:weather-lightning',
       'lightning-rainy': 'hass:weather-lightning-rainy',
-      'partlycloudy': 'hass:weather-partlycloudy',
+      'partlycloudy': 'hass:weather-partly-cloudy',
       'pouring': 'hass:weather-pouring',
       'rainy': 'hass:weather-rainy',
       'snowy': 'hass:weather-snowy',
@@ -290,7 +315,7 @@ class WeatherCardChart extends Polymer.Element {
       { hour:'2-digit', minute:'2-digit' }
     );
   }
-  
+
   computePressure(pressure) {
     var calcPressure = this.pressure2mmhg ? Math.round(pressure * 1000 / 1333)
         : Math.round(pressure);
