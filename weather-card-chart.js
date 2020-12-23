@@ -150,7 +150,7 @@ class WeatherCardChart extends Polymer.Element {
           <div class="main">
             <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
             <template is="dom-if" if="[[tempObj]]">
-              <div on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
+              <div on-click="_tempAttr">[[roundNumber1(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
             </template>
             <template is="dom-if" if="[[!tempObj]]">
               <div on-click="_weatherAttr">[[roundNumber(weatherObj.attributes.temperature)]]<sup>[[getUnit('temperature')]]</sup></div>
@@ -158,8 +158,18 @@ class WeatherCardChart extends Polymer.Element {
           </div>
           <div class="attributes" on-click="_weatherAttr">
             <div>
-              <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
-              <ha-icon icon="hass:gauge"></ha-icon> [[roundNumber(weatherObj.attributes.pressure)]] [[ll('uPress')]]
+              <template is="dom-if" if="[[humidObj]]">
+                <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(humidObj.state)]] %<br>
+              </template>
+              <template is="dom-if" if="[[!humidObj]]">
+                <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
+              </template>
+              <template is="dom-if" if="[[pressObj]]">
+                <ha-icon icon="hass:gauge"></ha-icon> [[roundNumber(pressObj.state)]] [[ll('uPress')]]
+              </template>
+              <template is="dom-if" if="[[!pressObj]]">
+                <ha-icon icon="hass:gauge"></ha-icon> [[roundNumber(weatherObj.attributes.pressure)]] [[ll('uPress')]]
+              </template>
             </div>
             <div>
               <template is="dom-if" if="[[sunObj]]">
@@ -198,6 +208,9 @@ class WeatherCardChart extends Polymer.Element {
       tempObj: Object,
       windObj: Object,
       mode: String,
+      numDays: Object,
+      pressObj: Object,
+      humidObj: Object,
       weatherObj: {
         type: Object,
         observer: 'dataChanged',
@@ -238,6 +251,10 @@ class WeatherCardChart extends Polymer.Element {
     this.tempObj = config.temp;
     this.windObj = config.wind;
     this.mode = config.mode;
+    this.pressObj = config.press;
+    this.humidObj = config.humid;
+    this.numDays = config.numDays ? config.numDays : 9;
+    //this.numDays = 4;
     if (!config.weather) {
       throw new Error('Please define "weather" entity in the card config');
     }
@@ -249,8 +266,10 @@ class WeatherCardChart extends Polymer.Element {
     this.weatherObj = this.config.weather in hass.states ? hass.states[this.config.weather] : null;
     this.sunObj = 'sun.sun' in hass.states ? hass.states['sun.sun'] : null;
     this.tempObj = this.config.temp in hass.states ? hass.states[this.config.temp] : null;
+    this.pressObj = this.config.press in hass.states ? hass.states[this.config.press] : null;
+    this.humidObj = this.config.humid in hass.states ? hass.states[this.config.humid] : null;
     this.windObj = this.config.wind in hass.states ? hass.states[this.config.wind] : null;
-    this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
+    this.forecast = this.weatherObj.attributes.forecast.slice(0, this.numDays);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
   }
 
@@ -260,6 +279,17 @@ class WeatherCardChart extends Polymer.Element {
 
   roundNumber(number) {
     var rounded = Math.round(number);
+    return rounded;
+  }
+
+  roundNumber1(number) {
+    if(this.config.temp) {
+      var rounded = parseFloat(number);
+      rounded = rounded.toFixed(1);
+      rounded = rounded.toLocaleString();
+    } else {
+      var rounded = Math.round(number);
+    }
     return rounded;
   }
 
@@ -304,16 +334,16 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   drawChart() {
-    var data = this.weatherObj.attributes.forecast.slice(0,9);
+    if (!this.weatherObj.attributes) {
+      return [];
+    }
+    var data = this.weatherObj.attributes.forecast.slice(0, this.numDays);
     var locale = this._hass.selectedLanguage || this._hass.language;
     var tempUnit = this._hass.config.unit_system.temperature;
     var lengthUnit = this._hass.config.unit_system.length;
     var precipUnit = lengthUnit === 'km' ? this.ll('uPrecip') : 'in';
     var mode = this.mode;
     var i;
-    if (!this.weatherObj.attributes.forecast) {
-      return [];
-    }
     var dateTime = [];
     var tempHigh = [];
     var tempLow = [];
