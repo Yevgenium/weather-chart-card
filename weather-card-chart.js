@@ -148,9 +148,15 @@ class WeatherCardChart extends Polymer.Element {
       <ha-card header="[[title]]">
         <div class="card">
           <div class="main">
+          <template is="dom-if" if="[[iconsObj]]">
+            <img src="[[getWeatherIconCustom(weatherObj.state)]]"></img>
+          </template>
+          <!--<img src="/local/custom_ui/weather-card-chart/icons/static/day.svg"></img>-->
+          <template is="dom-if" if="[[!iconsObj]]">
             <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
+          </template>
             <template is="dom-if" if="[[tempObj]]">
-              <div on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
+            <div on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
             </template>
             <template is="dom-if" if="[[!tempObj]]">
               <div on-click="_weatherAttr">[[roundNumber(weatherObj.attributes.temperature)]]<sup>[[getUnit('temperature')]]</sup></div>
@@ -182,7 +188,12 @@ class WeatherCardChart extends Polymer.Element {
           <div class="conditions">
             <template is="dom-repeat" items="[[forecast]]">
               <div>
-                <ha-icon icon="[[getWeatherIcon(item.condition)]]"></ha-icon>
+                <template is="dom-if" if="[[iconsObj]]">
+                  <img src="[[getWeatherIconCustom(weatherObj.state)]]"></img>
+                </template>
+                <template is="dom-if" if="[[!iconsObj]]">
+                  <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
+                </template>
               </div>
             </template>
           </div>
@@ -198,6 +209,7 @@ class WeatherCardChart extends Polymer.Element {
       tempObj: Object,
       windObj: Object,
       mode: String,
+      iconsObj: Object,
       weatherObj: {
         type: Object,
         observer: 'dataChanged',
@@ -224,7 +236,25 @@ class WeatherCardChart extends Polymer.Element {
       'windy': 'hass:weather-windy',
       'windy-variant': 'hass:weather-windy-variant'
     };
-    this.cardinalDirectionsIcon = [
+    this.weatherIconsAlt = {
+      clear: "day",
+      "clear-night": "night",
+      cloudy: "cloudy",
+      fog: "cloudy",
+      hail: "rainy-7",
+      lightning: "thunder",
+      "lightning-rainy": "thunder",
+      partlycloudy: "cloudy-day-3",
+      pouring: "rainy-6",
+      rainy: "rainy-5",
+      snowy: "snowy-6",
+      "snowy-rainy": "rainy-7",
+      sunny: "day",
+      windy: "cloudy",
+      "windy-variant": "cloudy-day-3",
+      exceptional: "!!"
+    };    
+this.cardinalDirectionsIcon = [
       'mdi:arrow-down', 'mdi:arrow-bottom-left', 'mdi:arrow-left',
       'mdi:arrow-top-left', 'mdi:arrow-up', 'mdi:arrow-top-right',
       'mdi:arrow-right', 'mdi:arrow-bottom-right', 'mdi:arrow-down'
@@ -238,6 +268,7 @@ class WeatherCardChart extends Polymer.Element {
     this.tempObj = config.temp;
     this.windObj = config.wind;
     this.mode = config.mode;
+    this.iconsObj = config.icons;
     if (!config.weather) {
       throw new Error('Please define "weather" entity in the card config');
     }
@@ -252,6 +283,7 @@ class WeatherCardChart extends Polymer.Element {
     this.windObj = this.config.wind in hass.states ? hass.states[this.config.wind] : null;
     this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
+    this.iconsObj = this.config.icons ? this.config.icons : null;
   }
 
   dataChanged() {
@@ -291,6 +323,11 @@ class WeatherCardChart extends Polymer.Element {
 
   getWeatherIcon(condition) {
     return this.weatherIcons[condition];
+  }
+
+  getWeatherIconCustom(condition) {
+    var icon = `${this.iconsObj}${this.weatherIconsAlt[condition]}.svg`;
+    return icon;
   }
 
   getWindDirIcon(degree) {
