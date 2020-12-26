@@ -189,10 +189,15 @@ class WeatherCardChart extends Polymer.Element {
             <template is="dom-repeat" items="[[forecast]]">
               <div>
                 <template is="dom-if" if="[[iconsObj]]">
-                  <img src="[[getWeatherIconCustom(weatherObj.state)]]"></img>
+                  <template is="dom-if" if="[[chartIconsWidthObj]]">
+                    <img src="[[getWeatherIconCustom(item.condition)]]" width="[[chartIconsWidthObj]]"></img>
+                  </template>
+                  <template is="dom-if" if="[[!chartIconsWidthObj]]">
+                    <img src="[[getWeatherIconCustom(item.condition)]]"></img>
+                  </template>
                 </template>
                 <template is="dom-if" if="[[!iconsObj]]">
-                  <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
+                  <ha-icon icon="[[getWeatherIcon(item.condition)]]"></ha-icon>
                 </template>
               </div>
             </template>
@@ -210,6 +215,7 @@ class WeatherCardChart extends Polymer.Element {
       windObj: Object,
       mode: String,
       iconsObj: Object,
+      chartIconsWidthObj: Object,
       weatherObj: {
         type: Object,
         observer: 'dataChanged',
@@ -269,6 +275,7 @@ this.cardinalDirectionsIcon = [
     this.windObj = config.wind;
     this.mode = config.mode;
     this.iconsObj = config.icons;
+    this.chartIconsWidthObj = config.chartIconsWidthObj;
     if (!config.weather) {
       throw new Error('Please define "weather" entity in the card config');
     }
@@ -284,6 +291,7 @@ this.cardinalDirectionsIcon = [
     this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
     this.iconsObj = this.config.icons ? this.config.icons : null;
+    this.chartIconsWidthObj = this.config.chartIconsWidth ? this.config.chartIconsWidth : null;
   }
 
   dataChanged() {
