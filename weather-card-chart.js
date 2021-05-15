@@ -32,6 +32,7 @@ const locale = {
   en: {
     tempHi: "Temperature",
     tempLo: "Temperature night",
+    tempApp: "Feels like",
     precip: "Precipitations",
     uPress: "hPa",
     uPressMmHg: "mmHg",
@@ -93,6 +94,7 @@ const locale = {
   ru: {
     tempHi: "Температура",
     tempLo: "Температура ночью",
+    tempApp: "Ощущается как",
     precip: "Осадки",
     uPress: "гПа",
     uPressMmHg: "мм",
@@ -142,8 +144,6 @@ class WeatherCardChart extends Polymer.Element {
         .main {
           display: flex;
           align-items: center;
-          font-size: 60px;
-          font-weight: 350;
           margin-top: -10px;
         }
         .main ha-icon {
@@ -152,12 +152,22 @@ class WeatherCardChart extends Polymer.Element {
           --mdc-icon-size: 74px;
           margin-right: 20px;
         }
-        .main div {
-          cursor: pointer;
+        .main .temp-content {
           margin-top: -11px;
         }
         .main sup {
-          font-size: 32px;
+          font-size: 50%;
+        }
+        .main ha-icon, .main .temp {
+          font-size: 400%;
+          font-weight: 350;
+        }
+        .main .temp {
+          cursor: pointer;
+        }
+        .main .apparent {
+          cursor: pointer;
+          margin-top: 0.75em;
         }
         .attributes {
           cursor: pointer;
@@ -192,18 +202,22 @@ class WeatherCardChart extends Polymer.Element {
           <div class="content">
             <div class="main" hidden="[[chartOnly]]">
               <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
+              <div class="temp-content">
               <template is="dom-if" if="[[tempObj]]">
-                <div on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
+                  <div class="temp" on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
+                  <template is="dom-if" if="[[apparentObj]]"><div class="apparent" on-click="_apparentAttr">[[ll('tempApp')]] [[roundNumber(apparentObj.state)]]<sup>[[getUnit('temperature')]]</sup></div></template>
               </template>
               <template is="dom-if" if="[[!tempObj]]">
-                <div on-click="_weatherAttr">[[roundNumber(weatherObj.attributes.temperature)]]<sup>[[getUnit('temperature')]]</sup></div>
+                  <div class="temp" on-click="_weatherAttr">[[roundNumber(weatherObj.attributes.temperature)]]<sup>[[getUnit('temperature')]]</sup></div>
+                  <template is="dom-if" if="[[apparentObj]]"><div class="apparent" on-click="_apparentAttr">[[ll('tempApp')]] [[roundNumber(apparentObj.state)]]<sup>[[getUnit('temperature')]]</sup></div></template>
               </template>
+              </div>
             </div>
             <div class="attributes" on-click="_weatherAttr" hidden="[[chartOnly]]">
               <div>
                 <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
                 <ha-icon icon="hass:gauge"></ha-icon> [[computePressure(weatherObj.attributes.pressure)]] [[ll('uPress')]]<br>
-                <ha-icon icon="hass:[[getWindDirIcon(windBearing)]]"></ha-icon> [[computeWind(weatherObj.attributes.wind_speed)]] [[getWindUnit()]]
+                <ha-icon icon="[[getWindDirIcon(windBearing)]]"></ha-icon> [[computeWind(weatherObj.attributes.wind_speed)]] [[getWindUnit()]]
               </div>
             </div>
           </div>
@@ -277,6 +291,7 @@ class WeatherCardChart extends Polymer.Element {
     this.title = config.title || "";
     this.weatherObj = config.weather || config.entity;
     this.tempObj = config.temp;
+    this.apparentObj = config.temp_apparent;
     this.mode = config.mode;
     this.windUnit = config.wind_unit || 'ms';
     this.pressure2mmhg = config.pressure2mmhg || false;
@@ -293,6 +308,7 @@ class WeatherCardChart extends Polymer.Element {
         this.config.entity in hass.states ? hass.states[this.config.entity] : null;
     this.sunObj = 'sun.sun' in hass.states ? hass.states['sun.sun'] : null;
     this.tempObj = this.config.temp in hass.states ? hass.states[this.config.temp] : null;
+    this.apparentObj = this.config.temp_apparent in hass.states ? hass.states[this.config.temp_apparent] : null;
     this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
   }
@@ -565,6 +581,10 @@ class WeatherCardChart extends Polymer.Element {
 
   _tempAttr() {
     this._fire('hass-more-info', { entityId: this.config.temp });
+  }
+
+  _apparentAttr() {
+    this._fire('hass-more-info', { entityId: this.config.temp_apparent });
   }
 
   _weatherAttr() {
