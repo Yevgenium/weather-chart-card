@@ -217,7 +217,14 @@ class WeatherCardChart extends Polymer.Element {
               <div>
                 <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
                 <ha-icon icon="hass:gauge"></ha-icon> [[computePressure(weatherObj.attributes.pressure)]] [[ll('uPress')]]<br>
-                <ha-icon icon="[[getWindDirIcon(windBearing)]]"></ha-icon> [[computeWind(weatherObj.attributes.wind_speed)]] [[getWindUnit()]]
+                <ha-icon icon="[[getWindDirIcon(windBearing)]]"></ha-icon>
+                <template is="dom-if" if="[[windObj]]">
+                  [[roundNumber(windObj.state)]]       
+                </template>
+                <template is="dom-if" if="[[!windObj]]">
+                  [[computeWind(weatherObj.attributes.wind_speed)]]
+                </template>
+                [[getWindUnit()]]
               </div>
             </div>
           </div>
@@ -249,6 +256,7 @@ class WeatherCardChart extends Polymer.Element {
       config: Object,
       sunObj: Object,
       tempObj: Object,
+      windObj: Object,
       mode: String,
       wind_unit: String,
       chartOnly: Boolean,
@@ -292,6 +300,7 @@ class WeatherCardChart extends Polymer.Element {
     this.weatherObj = config.weather || config.entity;
     this.tempObj = config.temp;
     this.apparentObj = config.temp_apparent;
+    this.windObj = config.wind;
     this.mode = config.mode;
     this.windUnit = config.wind_unit || 'ms';
     this.pressure2mmhg = config.pressure2mmhg || false;
@@ -309,6 +318,7 @@ class WeatherCardChart extends Polymer.Element {
     this.sunObj = 'sun.sun' in hass.states ? hass.states['sun.sun'] : null;
     this.tempObj = this.config.temp in hass.states ? hass.states[this.config.temp] : null;
     this.apparentObj = this.config.temp_apparent in hass.states ? hass.states[this.config.temp_apparent] : null;
+    this.windObj = this.config.wind in hass.states ? hass.states[this.config.wind] : null;
     this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
   }
