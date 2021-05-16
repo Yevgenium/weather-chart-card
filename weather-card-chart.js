@@ -134,7 +134,7 @@ class WeatherCardChart extends Polymer.Element {
           color: var(--paper-item-icon-color);
         }
         .card {
-          padding: 0 18px 18px 18px;
+          padding: 0 10px 10px 10px;
         }
         .content {
           display: flex;
@@ -150,17 +150,14 @@ class WeatherCardChart extends Polymer.Element {
           --iron-icon-height: 74px;
           --iron-icon-width: 74px;
           --mdc-icon-size: 74px;
-          margin-right: 20px;
-        }
-        .main .temp-content {
-          margin-top: -11px;
+          margin-right: 10px;
         }
         .main sup {
           font-size: 50%;
         }
         .main ha-icon, .main .temp {
           font-size: 400%;
-          font-weight: 350;
+          font-weight: 300;
         }
         .main .temp {
           cursor: pointer;
