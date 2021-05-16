@@ -379,6 +379,8 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   getWindDirIcon(degree) {
+    if (degree == 'unknown')
+      return 'mdi:circle-small';
     return this.cardinalDirectionsIcon[parseInt((degree + 22.5) / 45.0)];
   }
 
