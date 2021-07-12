@@ -4,7 +4,10 @@ const locale = {
     tempLo: "Temperatur nat",
     precip: "Nedbør",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NØ', 'NØ', 'Ø-NØ', 'Ø', 'Ø-SØ', 'SØ', 'S-SØ',
@@ -16,7 +19,10 @@ const locale = {
     tempLo: "Tiefsttemperatur",
     precip: "Niederschlag",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-SO', 'SO', 'S-SO',
@@ -26,9 +32,14 @@ const locale = {
   en: {
     tempHi: "Temperature",
     tempLo: "Temperature night",
+    tempApp: "Feels like",
     precip: "Precipitations",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uPressMmHg: "mmHg",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
@@ -40,7 +51,10 @@ const locale = {
     tempLo: "Temperatura mínima",
     precip: "Precipitations",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
@@ -52,7 +66,10 @@ const locale = {
     tempLo: "Température nuit",
     precip: "Précipitations",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
@@ -64,7 +81,10 @@ const locale = {
     tempLo: "Minimum temperatuur",
     precip: "Neerslag",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-ZO', 'ZO', 'Z-ZO',
@@ -74,9 +94,14 @@ const locale = {
   ru: {
     tempHi: "Температура",
     tempLo: "Температура ночью",
+    tempApp: "Ощущается как",
     precip: "Осадки",
     uPress: "гПа",
-    uSpeed: "м/с",
+    uPressMmHg: "мм",
+    uSpeed: {
+      "ms": "м/с",
+      "kmh": "км/ч"
+    },
     uPrecip: "мм",
     cardinalDirections: [
       'С', 'С-СВ', 'СВ', 'В-СВ', 'В', 'В-ЮВ', 'ЮВ', 'Ю-ЮВ',
@@ -88,7 +113,10 @@ const locale = {
     tempLo: "Temperatur natt",
     precip: "Nederbörd",
     uPress: "hPa",
-    uSpeed: "m/s",
+    uSpeed: {
+      "ms": "m/s",
+      "kmh": "km/h"
+    },
     uPrecip: "mm",
     cardinalDirections: [
       'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-SO', 'SO', 'S-SO',
@@ -106,37 +134,55 @@ class WeatherCardChart extends Polymer.Element {
           color: var(--paper-item-icon-color);
         }
         .card {
-          padding: 0 18px 18px 18px;
+          padding: 0 10px 10px 10px;
+        }
+        .content {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
         }
         .main {
           display: flex;
           align-items: center;
-          font-size: 60px;
-          font-weight: 350;
           margin-top: -10px;
         }
         .main ha-icon {
           --iron-icon-height: 74px;
           --iron-icon-width: 74px;
           --mdc-icon-size: 74px;
-          margin-right: 20px;
-        }
-        .main div {
-          cursor: pointer;
-          margin-top: -11px;
+          margin-right: 10px;
         }
         .main sup {
-          font-size: 32px;
+          font-size: 50%;
+        }
+        .main ha-icon, .main .temp {
+          font-size: 400%;
+          font-weight: 300;
+        }
+        .main .temp {
+          cursor: pointer;
+        }
+        .main .apparent {
+          cursor: pointer;
+          margin-top: 0.75em;
         }
         .attributes {
           cursor: pointer;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin: 10px 0px 10px 0px;
+          margin: 0px 0px 10px 0px;
         }
         .attributes div {
-          text-align: center;
+          text-align: left;
+        }
+        .sun {
+          display: flex;
+          justify-content: space-evenly;
+          margin: 10px 0;
+        }
+        .sun div {
+          flex: 0 0 auto;
         }
         .conditions {
           display: flex;
@@ -144,40 +190,51 @@ class WeatherCardChart extends Polymer.Element {
           align-items: center;
           margin: 0px 3px 0px 16px;
         }
+        [hidden] {
+          display: none !important;
+        }
       </style>
       <ha-card header="[[title]]">
         <div class="card">
-          <div class="main">
-            <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
-            <template is="dom-if" if="[[tempObj]]">
-              <div on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
-            </template>
-            <template is="dom-if" if="[[!tempObj]]">
-              <div on-click="_weatherAttr">[[roundNumber(weatherObj.attributes.temperature)]]<sup>[[getUnit('temperature')]]</sup></div>
-            </template>
-          </div>
-          <div class="attributes" on-click="_weatherAttr">
-            <div>
-              <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
-              <ha-icon icon="hass:gauge"></ha-icon> [[roundNumber(weatherObj.attributes.pressure)]] [[ll('uPress')]]
+          <div class="content">
+            <div class="main" hidden="[[chartOnly]]">
+              <ha-icon icon="[[getWeatherIcon(weatherObj.state)]]"></ha-icon>
+              <div class="temp-content">
+              <template is="dom-if" if="[[tempObj]]">
+                  <div class="temp" on-click="_tempAttr">[[roundNumber(tempObj.state)]]<sup>[[getUnit('temperature')]]</sup></div>
+                  <template is="dom-if" if="[[apparentObj]]"><div class="apparent" on-click="_apparentAttr">[[ll('tempApp')]] [[roundNumber(apparentObj.state)]]<sup>[[getUnit('temperature')]]</sup></div></template>
+              </template>
+              <template is="dom-if" if="[[!tempObj]]">
+                  <div class="temp" on-click="_weatherAttr">[[roundNumber(weatherObj.attributes.temperature)]]<sup>[[getUnit('temperature')]]</sup></div>
+                  <template is="dom-if" if="[[apparentObj]]"><div class="apparent" on-click="_apparentAttr">[[ll('tempApp')]] [[roundNumber(apparentObj.state)]]<sup>[[getUnit('temperature')]]</sup></div></template>
+              </template>
+              </div>
             </div>
-            <div>
-              <template is="dom-if" if="[[sunObj]]">
-                <ha-icon icon="mdi:weather-sunset-up"></ha-icon> [[computeTime(sunObj.attributes.next_rising)]]<br>
+            <div class="attributes" on-click="_weatherAttr" hidden="[[chartOnly]]">
+              <div>
+                <ha-icon icon="hass:water-percent"></ha-icon> [[roundNumber(weatherObj.attributes.humidity)]] %<br>
+                <ha-icon icon="hass:gauge"></ha-icon> [[computePressure(weatherObj.attributes.pressure)]] [[ll('uPress')]]<br>
+                <ha-icon icon="[[getWindDirIcon(windBearing)]]"></ha-icon>
+                <template is="dom-if" if="[[windObj]]">
+                  [[roundNumber(windObj.state)]]       
+                </template>
+                <template is="dom-if" if="[[!windObj]]">
+                  [[computeWind(weatherObj.attributes.wind_speed)]]
+                </template>
+                [[getWindUnit()]]
+              </div>
+            </div>
+          </div>
+          <template is="dom-if" if="[[sunObj]]">
+            <div class="sun" hidden="[[chartOnly]]">
+              <div>
+                <ha-icon icon="mdi:weather-sunset-up"></ha-icon> [[computeTime(sunObj.attributes.next_rising)]]
+              </div>
+              <div>
                 <ha-icon icon="mdi:weather-sunset-down"></ha-icon> [[computeTime(sunObj.attributes.next_setting)]]
-              </template>
+              </div>
             </div>
-            <div>
-              <ha-icon icon="[[getWindDirIcon(windBearing)]]"></ha-icon> [[getWindDir(windBearing)]]<br>
-              <ha-icon icon="hass:weather-windy"></ha-icon>
-              <template is="dom-if" if="[[windObj]]">
-                [[roundNumber(windObj.state)]] [[ll('uSpeed')]]                
-              </template>
-              <template is="dom-if" if="[[!windObj]]">
-                [[computeWind(weatherObj.attributes.wind_speed)]] [[ll('uSpeed')]]
-              </template>
-            </div>
-          </div>
+          </template>
           <ha-chart-base hass="[[_hass]]" data="[[ChartData]]"></ha-chart-base>
           <div class="conditions">
             <template is="dom-repeat" items="[[forecast]]">
@@ -198,6 +255,8 @@ class WeatherCardChart extends Polymer.Element {
       tempObj: Object,
       windObj: Object,
       mode: String,
+      wind_unit: String,
+      chartOnly: Boolean,
       weatherObj: {
         type: Object,
         observer: 'dataChanged',
@@ -208,6 +267,7 @@ class WeatherCardChart extends Polymer.Element {
   constructor() {
     super();
     this.mode = 'daily';
+    this.windUnit = 'ms';
     this.weatherIcons = {
       'clear-night': 'hass:weather-night',
       'cloudy': 'hass:weather-cloudy',
@@ -233,12 +293,16 @@ class WeatherCardChart extends Polymer.Element {
 
   setConfig(config) {
     this.config = config;
-    this.title = config.title;
-    this.weatherObj = config.weather;
+    this.title = config.title || "";
+    this.weatherObj = config.weather || config.entity;
     this.tempObj = config.temp;
+    this.apparentObj = config.temp_apparent;
     this.windObj = config.wind;
     this.mode = config.mode;
-    if (!config.weather) {
+    this.windUnit = config.wind_unit || 'ms';
+    this.pressure2mmhg = config.pressure2mmhg || false;
+    this.chartOnly = config.chart_only;
+    if (!this.weatherObj) {
       throw new Error('Please define "weather" entity in the card config');
     }
   }
@@ -246,9 +310,11 @@ class WeatherCardChart extends Polymer.Element {
   set hass(hass) {
     this._hass = hass;
     this.lang = this._hass.selectedLanguage || this._hass.language;
-    this.weatherObj = this.config.weather in hass.states ? hass.states[this.config.weather] : null;
+    this.weatherObj = this.config.weather in hass.states ? hass.states[this.config.weather] :
+        this.config.entity in hass.states ? hass.states[this.config.entity] : null;
     this.sunObj = 'sun.sun' in hass.states ? hass.states['sun.sun'] : null;
     this.tempObj = this.config.temp in hass.states ? hass.states[this.config.temp] : null;
+    this.apparentObj = this.config.temp_apparent in hass.states ? hass.states[this.config.temp_apparent] : null;
     this.windObj = this.config.wind in hass.states ? hass.states[this.config.wind] : null;
     this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
@@ -264,7 +330,10 @@ class WeatherCardChart extends Polymer.Element {
   }
 
   ll(str) {
-    if (locale[this.lang] === undefined)
+    if (str === "uPress" && this.pressure2mmhg) {
+      str = "uPressMmHg";
+    }
+    if (locale[this.lang] === undefined || locale[this.lang][str] === undefined)
       return locale.en[str];
     return locale[this.lang][str];
   }
@@ -276,9 +345,17 @@ class WeatherCardChart extends Polymer.Element {
     );
   }
 
+  computePressure(pressure) {
+    var calcPressure = this.pressure2mmhg ? Math.round(pressure * 1000 / 1333)
+        : Math.round(pressure);
+    return calcPressure;
+  }
+
   computeWind(speed) {
-    var calcSpeed = Math.round(speed * 1000 / 3600);
-    return calcSpeed;
+    if (this.windUnit === 'ms')
+      return Math.round(speed * 1000 / 3600);
+    else
+      return speed;
   }
 
   getCardSize() {
@@ -289,11 +366,18 @@ class WeatherCardChart extends Polymer.Element {
     return this._hass.config.unit_system[unit] || '';
   }
 
+  getWindUnit()
+  {
+    return this.ll('uSpeed')[this.windUnit];
+  }
+
   getWeatherIcon(condition) {
     return this.weatherIcons[condition];
   }
 
   getWindDirIcon(degree) {
+    if (degree == 'unknown')
+      return 'mdi:circle-small';
     return this.cardinalDirectionsIcon[parseInt((degree + 22.5) / 45.0)];
   }
 
@@ -508,8 +592,12 @@ class WeatherCardChart extends Polymer.Element {
     this._fire('hass-more-info', { entityId: this.config.temp });
   }
 
+  _apparentAttr() {
+    this._fire('hass-more-info', { entityId: this.config.temp_apparent });
+  }
+
   _weatherAttr() {
-    this._fire('hass-more-info', { entityId: this.config.weather });
+    this._fire('hass-more-info', { entityId: this.config.weather || this.config.entity });
   }
 }
 
