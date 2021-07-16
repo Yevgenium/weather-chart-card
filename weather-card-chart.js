@@ -202,6 +202,7 @@ class WeatherCardChart extends Polymer.Element {
         type: Object,
         observer: 'dataChanged',
       },
+            theme: String,
     };
   }
 
@@ -241,6 +242,7 @@ class WeatherCardChart extends Polymer.Element {
     if (!config.weather) {
       throw new Error('Please define "weather" entity in the card config');
     }
+        this.theme = config.theme;
   }
 
   set hass(hass) {
@@ -252,6 +254,7 @@ class WeatherCardChart extends Polymer.Element {
     this.windObj = this.config.wind in hass.states ? hass.states[this.config.wind] : null;
     this.forecast = this.weatherObj.attributes.forecast.slice(0,9);
     this.windBearing = this.weatherObj.attributes.wind_bearing;
+        this.applyThemesOnElement(this, this._hass.themes, this.theme);
   }
 
   dataChanged() {
@@ -325,9 +328,13 @@ class WeatherCardChart extends Polymer.Element {
       tempLow.push(d.templow);
       precip.push(d.precipitation);
     }
-    var style = getComputedStyle(document.body);
+        var style = this.theme ? getComputedStyle(this) : getComputedStyle(document.body);
     var textColor = style.getPropertyValue('--primary-text-color');
     var dividerColor = style.getPropertyValue('--divider-color');
+        var lowColor = style.getPropertyValue('--success-color');
+        var highColor = style.getPropertyValue('--error-color');
+        var rainColor = style.getPropertyValue('--info-color');
+
     const chartData = {
       labels: dateTime,
       datasets: [
@@ -341,8 +348,8 @@ class WeatherCardChart extends Polymer.Element {
           lineTension: 0.4,
           pointRadius: 0.0,
           pointHitRadius: 5.0,
-          borderColor: "#ff0029",
-          backgroundColor: "#ff0029",
+                    borderColor: highColor,
+                    backgroundColor: highColor,
           fill: false,
           tooltip: {
             callbacks: {
@@ -363,8 +370,8 @@ class WeatherCardChart extends Polymer.Element {
           lineTension: 0.4,
           pointRadius: 0.0,
           pointHitRadius: 5.0,
-          borderColor: "#66a61e",
-          backgroundColor: "#66a61e",
+                    borderColor: lowColor,
+                    backgroundColor: lowColor,
           fill: false,
           tooltip: {
             callbacks: {
@@ -383,8 +390,8 @@ class WeatherCardChart extends Polymer.Element {
           data: precip,
           xAxisID: "xAxes",
           yAxisID: 'yPrecipAxis',
-          borderColor: "#262889",
-          backgroundColor: "#262889",
+                    borderColor: rainColor,
+                    backgroundColor: rainColor,
           tooltip: {
             callbacks: {
               label: function(context) {
@@ -537,6 +544,34 @@ class WeatherCardChart extends Polymer.Element {
     this.ChartOptions = chartOptions;
   }
 
+    applyThemesOnElement = (
+        element,
+        themes,
+        localTheme,
+    ) => {
+        if (!element._themes) {
+            element._themes = {};
+        }
+        let themeName = themes.default_theme;
+        if (localTheme === "default" || (localTheme && themes.themes[localTheme])) {
+            themeName = localTheme;
+        }
+        const styles = {...element._themes };
+        if (themeName !== "default") {
+            const theme = themes.themes[themeName];
+            Object.keys(theme).forEach((key) => {
+                const prefixedKey = "--" + key;
+                element._themes[prefixedKey] = "";
+                styles[prefixedKey] = theme[key];
+            });
+        }
+        if (element.updateStyles) {
+            element.updateStyles(styles);
+        } else if ((window).ShadyCSS) {
+            // implement updateStyles() method of Polemer elements
+            (window).ShadyCSS.styleSubtree( /** @type {!HTMLElement} */ (element), styles);
+        }
+    }
   _fire(type, detail, options) {
     const node = this.shadowRoot;
     options = options || {};
