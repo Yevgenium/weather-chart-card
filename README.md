@@ -42,7 +42,7 @@ entity: weather.home
 
 | Name            | Type    | Default                  | Description                                                                                        |
 | --------------- | ------- | -------------------------|--------------------------------------------------------------------------------------------------- |
-| pressure        | string  | 'hPa'                    | Can be 'hPa' or 'mmHg'                                                                             |
+| pressure        | string  | 'hPa'                    | Can be 'hPa', 'mmHg', or 'in'                                                                             |
 | speed           | string  | 'km/h'                   | Can be 'km/h' or 'm/s'                                                                             |
 
 ###### What custom icons can I use?
