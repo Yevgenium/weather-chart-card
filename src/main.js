@@ -473,6 +473,8 @@ class WeatherChartCard extends LitElement {
     }
     if (this.unitPressure === 'mmHg') {
       pressure = Math.round(pressure * 0.75);
+    } else if (this.unitPressure === 'in' ) {
+      pressure = pressure.toFixed(2);
     }
     if (config.show_attributes == false)
       return html``;
