@@ -73,6 +73,7 @@ class WeatherChartCard extends LitElement {
       this.windSpeed = this.weather.attributes.wind_speed;
       this.windDirection = this.weather.attributes.wind_bearing;
     }
+    this.maxChartLookahead = this.config.max_chart_lookahead ? this.config.max_chart_lookahead : 0;
   }
 
   constructor() {
@@ -133,6 +134,16 @@ class WeatherChartCard extends LitElement {
     this.forecastItems = Math.round(card.offsetWidth / (fontSize * 5.5));
   }
 
+  getForecast(weather, forecastItems) {
+    if (this.maxChartLookahead == 0 ) {
+      return weather.attributes.forecast.slice(0, forecastItems);
+    } else {
+      var hoursPerEntity = parseInt(Math.min(weather.attributes.forecast.length, this.maxChartLookahead)/forecastItems);
+      var tmpForecast = weather.attributes.forecast.slice(0, forecastItems * hoursPerEntity);
+      return tmpForecast.filter((e, i) => i % hoursPerEntity === (hoursPerEntity - 1));
+    }
+  }
+
   drawChart({config, language, weather, forecastItems} = this) {
     if (!weather || !weather.attributes || !weather.attributes.forecast) {
       return [];
@@ -143,7 +154,7 @@ class WeatherChartCard extends LitElement {
     var tempUnit = this._hass.config.unit_system.temperature;
     var lengthUnit = this._hass.config.unit_system.length;
     var precipUnit = lengthUnit === 'km' ? this.ll('units')['mm'] : this.ll('units')['in'];
-    var forecast = weather.attributes.forecast.slice(0, forecastItems);
+    var forecast = this.getForecast(weather, forecastItems);
     if ((new Date(forecast[1].datetime) - new Date(forecast[0].datetime)) < 864e5)
       var mode = 'hourly';
     else
@@ -330,7 +341,7 @@ class WeatherChartCard extends LitElement {
     if (!weather || !weather.attributes || !weather.attributes.forecast) {
       return [];
     }
-    var forecast = weather.attributes.forecast.slice(0, forecastItems);
+    var forecast = this.getForecast(weather, forecastItems);
     var i;
     var dateTime = [];
     var tempHigh = [];
