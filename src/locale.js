@@ -215,7 +215,38 @@ const locale = {
     'sunny': 'Soligt',
     'windy': 'Blåsigt',
     'windy-variant': 'Blåsigt'
-  }
+  },
+    de: {
+      tempHi: 'Höchsttemperatur',
+      tempLo: 'Tiefsttemperatur',
+      precip: 'Niederschlag',
+      'units': {
+        'km/h': 'km/h',
+        'm/s': 'm/s',
+        'hPa': 'hPa',
+        'mmHg': 'mm Hg',
+        'mm': 'mm',
+        'in': 'in'
+      },
+      cardinalDirections: [
+        'N', 'N-NO', 'NO', 'O-NO', 'O', 'O-SO', 'SO', 'S-SO',
+        'S', 'S-SW', 'SW', 'W-SW', 'W', 'W-NW', 'NW', 'N-NW', 'N'
+      ],
+      'clear-night': 'Klar, Nachts',
+      'cloudy': 'Bewölkt',
+      'fog': 'Nebel',
+      'hail': 'Hagel',
+      'lightning': 'Gewitter',
+      'lightning-rainy': 'Gewitter, Regen',
+      'partlycloudy': 'Teilweise Bewölkt',
+      'pouring': 'Niesel',
+      'rainy': 'Regen',
+      'snowy': 'Schnee',
+      'snowy-rainy': 'Verschneit, regnerisch',
+      'sunny': 'Sonnig',
+      'windy': 'Windig',
+      'windy-variant': 'Windig'
+    }
 };
 
 export default locale;
