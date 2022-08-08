@@ -154,6 +154,37 @@ const locale = {
     'windy': 'Tuulista',
     'windy-variant': 'Tuulista'
   },
+  fr: {
+    'tempHi': 'Température',
+    'tempLo': 'Température nuit',
+    'precip': 'Précipitations',
+    'units': {
+      'km/h': 'km/h',
+      'm/s': 'm/s',
+      'hPa': 'hPa',
+      'mmHg': 'mm Hg',
+      'mm': 'mm',
+      'in': 'po'
+    },
+    'cardinalDirections': [
+      'N', 'N-NE', 'NE', 'E-NE', 'E', 'E-SE', 'SE', 'S-SE',
+      'S', 'S-SO', 'SO', 'O-SO', 'O', 'O-NO', 'NO', 'N-NO', 'N'
+    ],
+    'clear-night': 'Nuit, claire',
+    'cloudy': 'Nuageux',
+    'fog': 'Brouillard',
+    'hail': 'Grêle',
+    'lightning': 'Foudre',
+    'lightning-rainy': 'Foudre, pluvieux',
+    'partlycloudy': 'Partiellement nuageux',
+    'pouring': 'Pluie battante',
+    'rainy': 'Pluvieux',
+    'snowy': 'Neigeux',
+    'snowy-rainy': 'Neigeux, Pluvieux',
+    'sunny': 'Ensoleillé',
+    'windy': 'Venteux',
+    'windy-variant': 'Venteux'
+  },
   hu: {
     'tempHi': 'Max. hőmérséklet',
     'tempLo': 'Min. hőmérséklet',
