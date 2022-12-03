@@ -136,12 +136,12 @@ class WeatherChartCard extends LitElement {
   }
 
   compressForecast(forecast, maxChartLookahead, forecastItems) {
-    var maxEntries = Math.min(forecast, maxChartLookahead)
+    var maxEntries = Math.min(forecast.length, maxChartLookahead)
     var entriesPerItem = (maxChartLookahead == 0 || forecastItems==0)? 1:
       parseInt(maxEntries/forecastItems);
     var tmpForecast = [];
     if (entriesPerItem > 1) 
-      for (i =0 ; i < maxEntries; i += entriesPerItem){
+      for (var i = 0; i < maxEntries; i += entriesPerItem){
         var ds = forecast.slice(i , i + entriesPerItem);
         tmpForecast.push({
           datetime :ds[0].datetime,
@@ -166,7 +166,7 @@ class WeatherChartCard extends LitElement {
     var tempUnit = this._hass.config.unit_system.temperature;
     var lengthUnit = this._hass.config.unit_system.length;
     var precipUnit = lengthUnit === 'km' ? this.ll('units')['mm'] : this.ll('units')['in'];
-    var forecast = compressForecast(weather.attributes.forecast,maxChartLookahead,forecastItems);
+    var forecast = this.compressForecast(weather.attributes.forecast,maxChartLookahead,forecastItems);
     if ((new Date(forecast[1].datetime) - new Date(forecast[0].datetime)) < 864e5)
       var mode = 'hourly';
     else

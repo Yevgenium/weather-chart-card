@@ -1,7 +1,7 @@
 const locale = {
   cs: {
     'tempHi': 'Teplota',
-    'tempLo': 'Teplota v noci',
+    'tempLo': 'Nízká teplota',
     'precip': 'Srážky',
     'units': {
       'km/h': 'km/h',
@@ -32,7 +32,7 @@ const locale = {
   },
   de: {
     'tempHi': 'Temperatur',
-    'tempLo': 'Nachttemperatur',
+    'tempLo': 'Tiefsttemperatur',
     'precip': 'Niederschlag',
     'units': {
       'km/h': 'km/h',
@@ -63,7 +63,7 @@ const locale = {
   },
   en: {
     'tempHi': 'Temperature',
-    'tempLo': 'Temperature night',
+    'tempLo': 'Low Temperature',
     'precip': 'Precipitations',
     'units': {
       'km/h': 'km/h',
@@ -187,7 +187,7 @@ const locale = {
   },
   ru: {
     'tempHi': 'Температура',
-    'tempLo': 'Температура ночью',
+    'tempLo': 'низкая температура',
     'precip': 'Осадки',
     'units': {
       'km/h': 'км/ч',
