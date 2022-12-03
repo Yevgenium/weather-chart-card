@@ -35,6 +35,9 @@ entity: weather.home
 | icons_size           | number  | 25                       | The size of custom icons in pixels.                                                                |
 | forecast             | object  | none                     | See [forecast options](#forecast-options) for available options.                       |
 | units                | object  | none                     | See [units of measurement](#units-of-measurement) for available options.                           |
+| max_chart_lookahead | number  | 0                        | Desired lookahead elements for forecast chart.  Default is fist `n` elements based on card width.\* |
+
+\* For the `forecast` in your `entity` object, the maximum number of elements to look ahead to display on the chart that will fit within your card's width swapping granularity for lookahead time.  For example, if you have 24 hours of hourly weather in your weather entity, set this value to 18, and your card can display 8 elements, your chart would display 8 elemnts at 2 hour intervals dropping the last 2 hourlies in the desired window, but making sure to display as much data as possible.
 
 ##### Forecast options
 
@@ -45,6 +48,8 @@ entity: weather.home
 | temperature2_color   | string  | rgba(68, 115, 158, 1.0)  | Temperature second line chart color.                                                               |
 | precipitation_color  | string  | rgba(132, 209, 253, 1.0) | Precipitation bar chart color.                                                                     |
 | condition_icons      | boolean | true                     | Show or hide forecast condition icons.                                                             |
+| temperature_labels   | boolean | true                     | Show or hide value labels on temperature curves.
+On false the temperature axis and gridlines are shown instead. |
 
 ##### Units of measurement
 
