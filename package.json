@@ -10,21 +10,22 @@
     "lovelace",
     "custom-cards"
   ],
+  "type": "module",
   "module": "src/main.js",
   "repository": "git@github.com:Yevgenium/lovelace-weather-card-chart.git",
   "author": "Yevgeniy Prokopenko",
   "license": "MIT",
   "dependencies": {
-    "lit": "^2.0.2",
-    "chart.js": "3.5.1",
-    "chartjs-plugin-datalabels": "^2.0.0"
+    "lit": "^2.4.1",
+    "chart.js": "^3.5.1",
+    "chartjs-plugin-datalabels": "^2.1.0"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "acorn": "^8.4.1",
-    "rollup": "^2.33.1",
+    "eslint": "^8.29.0",
+    "acorn": "^8.8.1",
+    "rollup": "^3.5.1",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-serve": "^1.1.0"
+    "rollup-plugin-serve": "^2.0.2"
   },
   "scripts": {
     "start": "rollup -c rollup.config.dev.js --watch",
