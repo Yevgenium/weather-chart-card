@@ -46,6 +46,7 @@ class WeatherChartCard extends LitElement {
         temperature2_color: 'rgba(68, 115, 158, 1.0)',
         precipitation_color: 'rgba(132, 209, 253, 1.0)',
         condition_icons: true,
+        temperature_labels: true,
         ...config.forecast,
       },
       units: {
@@ -73,6 +74,7 @@ class WeatherChartCard extends LitElement {
       this.windSpeed = this.weather.attributes.wind_speed;
       this.windDirection = this.weather.attributes.wind_bearing;
     }
+    this.maxChartLookahead = this.config.max_chart_lookahead ? this.config.max_chart_lookahead : 0;
   }
 
   constructor() {
@@ -133,7 +135,28 @@ class WeatherChartCard extends LitElement {
     this.forecastItems = Math.round(card.offsetWidth / (fontSize * 5.5));
   }
 
-  drawChart({config, language, weather, forecastItems} = this) {
+  compressForecast(forecast, maxChartLookahead, forecastItems) {
+    var maxEntries = Math.min(forecast, maxChartLookahead)
+    var entriesPerItem = (maxChartLookahead == 0 || forecastItems==0)? 1:
+      parseInt(maxEntries/forecastItems);
+    var tmpForecast = [];
+    if (entriesPerItem > 1) 
+      for (i =0 ; i < maxEntries; i += entriesPerItem){
+        var ds = forecast.slice(i , i + entriesPerItem);
+        tmpForecast.push({
+          datetime :ds[0].datetime,
+          temperature: Math.max(...ds.map(d => d.temperature)),
+          templow: (typeof ds[0].templow == 'undefined')?
+            Math.min(...ds.map(d => d.temperature)): Math.min(...ds.map(d => d.templow)),
+          precipitation: ds.reduce((s,d)=> s+d.precipitation,0)
+        });
+      }
+    else
+      tmpForecast = forecast.slice(0,forecastItems);
+    return tmpForecast;
+  }
+
+  drawChart({config, language, weather, forecastItems,maxChartLookahead} = this) {
     if (!weather || !weather.attributes || !weather.attributes.forecast) {
       return [];
     }
@@ -143,7 +166,7 @@ class WeatherChartCard extends LitElement {
     var tempUnit = this._hass.config.unit_system.temperature;
     var lengthUnit = this._hass.config.unit_system.length;
     var precipUnit = lengthUnit === 'km' ? this.ll('units')['mm'] : this.ll('units')['in'];
-    var forecast = weather.attributes.forecast.slice(0, forecastItems);
+    var forecast = compressForecast(weather.attributes.forecast,maxChartLookahead,forecastItems);
     if ((new Date(forecast[1].datetime) - new Date(forecast[0].datetime)) < 864e5)
       var mode = 'hourly';
     else
@@ -173,7 +196,7 @@ class WeatherChartCard extends LitElement {
     Chart.defaults.elements.line.fill = false;
     Chart.defaults.elements.line.tension = 0.3;
     Chart.defaults.elements.line.borderWidth = 1.5;
-    Chart.defaults.elements.point.radius = 2;
+    Chart.defaults.elements.point.radius = 0;
     Chart.defaults.elements.point.hitRadius = 10;
 
     this.forecastChart = new Chart(ctx, {
@@ -187,6 +210,11 @@ class WeatherChartCard extends LitElement {
           yAxisID: 'TempAxis',
           borderColor: config.forecast.temperature1_color,
           backgroundColor: config.forecast.temperature1_color,
+          datalabels: {
+            labels: {
+              display: config.forecast.temperature_labels
+            }
+          }
         },
         {
           label: this.ll('tempLo'),
@@ -195,6 +223,11 @@ class WeatherChartCard extends LitElement {
           yAxisID: 'TempAxis',
           borderColor: config.forecast.temperature2_color,
           backgroundColor: config.forecast.temperature2_color,
+          datalabels: {
+            labels: {
+              display: config.forecast.temperature_labels
+            }
+          }
         },
         {
           label: this.ll('precip'),
@@ -263,7 +296,7 @@ class WeatherChartCard extends LitElement {
               drawTicks: false,
             },
             ticks: {
-              display: false,
+              display: !config.forecast.temperature_labels,
             }
           },
           PrecipAxis: {
