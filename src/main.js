@@ -143,12 +143,16 @@ class WeatherChartCard extends LitElement {
     if (entriesPerItem > 1) 
       for (var i = 0; i < maxEntries; i += entriesPerItem){
         var ds = forecast.slice(i , i + entriesPerItem);
+        var counts = {};
+        ds.forEach(function (d) { counts[d.condition] = (counts[d.condition] || 0) + 1; });
         tmpForecast.push({
           datetime :ds[0].datetime,
           temperature: Math.max(...ds.map(d => d.temperature)),
           templow: (typeof ds[0].templow == 'undefined')?
             Math.min(...ds.map(d => d.temperature)): Math.min(...ds.map(d => d.templow)),
-          precipitation: ds.reduce((s,d)=> s+d.precipitation,0)
+          precipitation: ds.reduce((s,d)=> s+d.precipitation,0),
+          condition: Object.keys(counts).reduce((a,b) => (counts[b] >= counts[a])?b:a,
+            ds[0].condition)
         });
       }
     else
@@ -543,8 +547,9 @@ class WeatherChartCard extends LitElement {
     `;
   }
 
-  renderForecastConditionIcons({config, weather, forecastItems} = this) {
-    const forecast = weather.attributes.forecast.slice(0, forecastItems);
+  renderForecastConditionIcons({config, weather, forecastItems,maxChartLookahead} = this) {
+    const forecast = this.compressForecast(
+      weather.attributes.forecast,maxChartLookahead,forecastItems);
     if (config.forecast.condition_icons == false)
       return html``;
     return html`
