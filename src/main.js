@@ -432,6 +432,8 @@ class WeatherChartCard extends LitElement {
           align-items: center;
           font-size: 28px;
           margin-bottom: 10px;
+          margin-right: 30px;
+          float: left;
         }
         .main ha-icon {
           --mdc-icon-size: 50px;
@@ -454,6 +456,7 @@ class WeatherChartCard extends LitElement {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 6px;
+          min-width: 220px;
         }
         .chart-container {
           position: relative;
