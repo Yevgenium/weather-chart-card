@@ -15,7 +15,8 @@ class WeatherChartCard extends LitElement {
   static getStubConfig() {
     return {
       "show_main": true,
-      "show_attributes": true
+      "show_attributes": true,
+      "precipitation_type": 'rainfall'
     };
   }
 
@@ -142,7 +143,11 @@ class WeatherChartCard extends LitElement {
     }
     var tempUnit = this._hass.config.unit_system.temperature;
     var lengthUnit = this._hass.config.unit_system.length;
-    var precipUnit = lengthUnit === 'km' ? this.ll('units')['mm'] : this.ll('units')['in'];
+    if (config.precipitation_type === 'percentage') {
+      var precipUnit = '%';
+    } else {
+      var precipUnit = lengthUnit === 'km' ? this.ll('units')['mm'] : this.ll('units')['in'];
+    }
     var forecast = weather.attributes.forecast.slice(0, forecastItems);
     if ((new Date(forecast[1].datetime) - new Date(forecast[0].datetime)) < 864e5)
       var mode = 'hourly';
@@ -160,7 +165,11 @@ class WeatherChartCard extends LitElement {
       if (typeof d.templow !== 'undefined') {
         tempLow.push(d.templow);
       }
-      precip.push(d.precipitation);
+      if (config.precipitation_type === 'percentage') {
+        precip.push(d.precipitation_probability);
+      } else {
+        precip.push(d.precipitation);
+      }
     }
     var style = getComputedStyle(document.body);
     var backgroundColor = style.getPropertyValue('--card-background-color');
@@ -326,7 +335,7 @@ class WeatherChartCard extends LitElement {
     });
   }
 
-  updateChart({weather, forecastItems, forecastChart} = this) {
+  updateChart({config, weather, forecastItems, forecastChart} = this) {
     if (!weather || !weather.attributes || !weather.attributes.forecast) {
       return [];
     }
@@ -343,7 +352,11 @@ class WeatherChartCard extends LitElement {
       if (typeof d.templow !== 'undefined') {
         tempLow.push(d.templow);
       }
-      precip.push(d.precipitation);
+      if (config.precipitation_type === 'percentage') {
+        precip.push(d.precipitation_probability);
+      } else {
+        precip.push(d.precipitation);
+      }
     }
     if (forecastChart) {
       forecastChart.data.labels = dateTime;
