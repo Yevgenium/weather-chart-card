@@ -143,7 +143,7 @@ class WeatherChartCard extends LitElement {
     }
     var tempUnit = this._hass.config.unit_system.temperature;
     var lengthUnit = this._hass.config.unit_system.length;
-    if (config.precipitation_type === 'percentage') {
+    if (config.precipitation_type === 'probability') {
       var precipUnit = '%';
     } else {
       var precipUnit = lengthUnit === 'km' ? this.ll('units')['mm'] : this.ll('units')['in'];
@@ -165,7 +165,7 @@ class WeatherChartCard extends LitElement {
       if (typeof d.templow !== 'undefined') {
         tempLow.push(d.templow);
       }
-      if (config.precipitation_type === 'percentage') {
+      if (config.precipitation_type === 'probability') {
         precip.push(d.precipitation_probability);
       } else {
         precip.push(d.precipitation);
